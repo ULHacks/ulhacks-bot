@@ -9,6 +9,7 @@ def run(token, **bot_kwargs):
     bot = commands.Bot(**bot_kwargs)
 
     bot.load_extension("extensions.info")
+    bot.load_extension("extensions.admin")
 
     bot.run(token)
 
