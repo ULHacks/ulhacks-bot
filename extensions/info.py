@@ -14,5 +14,16 @@ class Info(commands.Cog):
     async def on_ready(self):
         print(f"Logged in as {self.bot.user}")
 
+    @commands.Cog.listener()
+    async def on_command_error(self, ctx, error):
+        # Unpack the error for cleaner error messages
+        if isinstance(error, commands.CommandInvokeError):
+            error = error.__cause__ or error
+        try:
+            await ctx.send(f"Oops, an error occurred: `{error!r}`")
+        except Exception:
+            print(f"Error: {error!r}")
+            raise
+
 def setup(bot):
     bot.add_cog(Info(bot))
