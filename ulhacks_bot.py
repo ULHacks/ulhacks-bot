@@ -33,8 +33,12 @@ def run(token, **bot_kwargs):
     finally:
         loop.close()
 
-if __name__ == "__main__":
+def main():
+    """Entry point to run the ULHacks bot"""
     run(
         os.environ["ULHACKS_BOT_TOKEN"],
         command_prefix=command_prefix,
     )
+
+if __name__ == "__main__":
+    main()
