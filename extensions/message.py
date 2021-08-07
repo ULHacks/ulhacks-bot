@@ -3,7 +3,7 @@
 from discord.ext import commands
 
 class Message(commands.Cog):
-    TYPES = tuple("message register".split())
+    TYPES = tuple("message register hacker".split())
 
     def __init__(self, bot, *, message_channel_id):
         self.bot = bot
@@ -47,6 +47,19 @@ class Message(commands.Cog):
         await ctx.send(
             "Thanks for sending a message!"
             " An organizer will set you up as soon as possible!"
+        )
+
+    @commands.command()
+    async def hacker(self, ctx):
+        """Notify the organizers of your participation"""
+        parts = [ctx.author.mention]
+        message_prefix = await self.bot.store.get("message:prefix:hacker")
+        if message_prefix:
+            parts.insert(0, message_prefix)
+        await self.message_channel.send(" ".join(parts))
+        await ctx.send(
+            "Thanks for participating in ULHacks!"
+            " An organizer will verify you as soon as possible!"
         )
 
     @commands.command()
