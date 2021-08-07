@@ -18,6 +18,7 @@ class Message(commands.Cog):
                 raise RuntimeError("cannot get message channel")
 
     @commands.command()
+    @commands.cooldown(1, 5, commands.BucketType.user)
     async def message(self, ctx, *, text=""):
         """Send a message to the organizers who will get back to you ASAP"""
         if not text:
