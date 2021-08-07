@@ -3,7 +3,7 @@
 from discord.ext import commands
 
 class Message(commands.Cog):
-    TYPES = tuple("message".split())
+    TYPES = tuple("message register".split())
 
     def __init__(self, bot, *, message_channel_id):
         self.bot = bot
@@ -19,7 +19,7 @@ class Message(commands.Cog):
 
     @commands.command()
     async def message(self, ctx, *, text=""):
-        """Requests help from an organizer"""
+        """Send a message to the organizers who will get back to you ASAP"""
         if not text:
             await ctx.send("Please add a message to your request")
             return
@@ -31,6 +31,22 @@ class Message(commands.Cog):
         await ctx.send(
             "Thanks for sending a message!"
             " An organizer will get back to you as soon as possible!"
+        )
+
+    @commands.command()
+    async def register(self, ctx, *, text=""):
+        """Send a message to the organizers to notify them of your role"""
+        if not text:
+            await ctx.send("Please add a message to your request")
+            return
+        parts = [ctx.author.mention, text]
+        message_prefix = await self.bot.store.get("message:prefix:register")
+        if message_prefix:
+            parts.insert(0, message_prefix)
+        await self.message_channel.send(" ".join(parts))
+        await ctx.send(
+            "Thanks for sending a message!"
+            " An organizer will set you up as soon as possible!"
         )
 
     @commands.command()
