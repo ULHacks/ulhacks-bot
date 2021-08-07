@@ -57,6 +57,19 @@ class JsonStore(Store):
         # Keys that don't exist are ""
         return data.get(str(key), "")
 
+    async def keys(self):
+        if self.lock is None:
+            self.lock = asyncio.Lock()
+        async with self.lock:
+            keys = await asyncio.to_thread(self._keys)
+        for key in keys:
+            yield key
+
+    def _keys(self):
+        with open(self.filename) as file:
+            data = json.load(file)
+        return data.keys()
+
 def setup(bot):
     filename = os.environ.get("ULHACKS_JSON_STORE_FILENAME", None)
     bot.store = JsonStore(filename=filename)
