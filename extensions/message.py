@@ -24,7 +24,7 @@ class Message(commands.Cog):
             await ctx.send("Please add a message to your request")
             return
         parts = [ctx.author.mention, text]
-        message_prefix = await self.bot.store.get("config:message:prefix")
+        message_prefix = await self.bot.store.get("message:prefix:message")
         if message_prefix:
             parts.insert(0, f"{message_prefix}")
         await self.message_channel.send(" ".join(parts))
