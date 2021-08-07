@@ -60,11 +60,21 @@ class Message(commands.Cog):
     @commands.command()
     async def hacker(self, ctx):
         """Notify the organizers of your participation"""
+        if await self.bot.store.get(f"message:hacker:{ctx.author.id}"):
+            await ctx.send(
+                "You have already sent a verification request with `$hacker`."
+                " If you have any questions, please use the `$message` command"
+                " to contact an organizer. (Example: `$message it's been 3"
+                " days since my $hacker request, could you make sure it went"
+                " through?`)"
+            )
+            return
         parts = [ctx.author.mention]
         prefix = await self.bot.store.get("message:prefix:hacker")
         if prefix:
             parts.insert(0, prefix)
         await self.message_channel.send(" ".join(parts))
+        await self.bot.store.set(f"message:hacker:{ctx.author.id}", "1")
         await ctx.send(
             "Thanks for participating in ULHacks!"
             " An organizer will verify you as soon as possible!"
