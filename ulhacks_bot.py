@@ -5,9 +5,13 @@ https://github.com/GeeTransit/joshgone/blob/main/joshgone.py and its comments.
 
 """
 import os
+import discord
 from discord.ext import commands
 
 command_prefix = commands.when_mentioned_or("$")
+
+intents = discord.Intents.default()
+intents.members = True
 
 def _run(token, **bot_kwargs):
     bot = commands.Bot(**bot_kwargs)
@@ -42,6 +46,7 @@ def main():
     run(
         os.environ["ULHACKS_BOT_TOKEN"],
         command_prefix=command_prefix,
+        intents=intents,
     )
 
 if __name__ == "__main__":
