@@ -18,5 +18,22 @@ class StoreCog(commands.Cog, name="Store"):
         value = await self.bot.store.get(key)
         await ctx.send(value or "*Empty value*")
 
+    @commands.command(ignore_extras=False)
+    @commands.is_owner()
+    async def keys(self, ctx):
+        buffer = []
+        length = 0
+        sep = ", "
+        async for key in self.bot.store.keys():
+            if length + len(sep) + len(key) > 2000:
+                await ctx.send(sep.join(buffer))
+                buffer = [key]
+                length = len(key)
+            else:
+                buffer.append(key)
+                length += len(sep) + len(key)
+        if buffer:
+            await ctx.send(sep.join(buffer))
+
 def setup(bot):
     bot.add_cog(StoreCog(bot))
