@@ -24,9 +24,9 @@ class Message(commands.Cog):
             await ctx.send("Please add a message to your request")
             return
         parts = [ctx.author.mention, text]
-        message_prefix = await self.bot.store.get("message:prefix:message")
-        if message_prefix:
-            parts.insert(0, f"{message_prefix}")
+        prefix = await self.bot.store.get("message:prefix:message")
+        if prefix:
+            parts.insert(0, prefix)
         await self.message_channel.send(" ".join(parts))
         await ctx.send(
             "Thanks for sending a message!"
@@ -40,9 +40,9 @@ class Message(commands.Cog):
             await ctx.send("Please add a message to your request")
             return
         parts = [ctx.author.mention, text]
-        message_prefix = await self.bot.store.get("message:prefix:register")
-        if message_prefix:
-            parts.insert(0, message_prefix)
+        prefix = await self.bot.store.get("message:prefix:register")
+        if prefix:
+            parts.insert(0, prefix)
         await self.message_channel.send(" ".join(parts))
         await ctx.send(
             "Thanks for helping out with ULHacks!"
@@ -53,9 +53,9 @@ class Message(commands.Cog):
     async def hacker(self, ctx):
         """Notify the organizers of your participation"""
         parts = [ctx.author.mention]
-        message_prefix = await self.bot.store.get("message:prefix:hacker")
-        if message_prefix:
-            parts.insert(0, message_prefix)
+        prefix = await self.bot.store.get("message:prefix:hacker")
+        if prefix:
+            parts.insert(0, prefix)
         await self.message_channel.send(" ".join(parts))
         await ctx.send(
             "Thanks for participating in ULHacks!"
