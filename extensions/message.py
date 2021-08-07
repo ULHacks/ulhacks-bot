@@ -26,6 +26,10 @@ class Message(commands.Cog):
         if message_prefix:
             parts.insert(0, f"{message_prefix}")
         await self.message_channel.send(" ".join(parts))
+        await ctx.send(
+            "Thanks for sending a message!"
+            " An organizer will get back to you as soon as possible!"
+        )
 
     @commands.command()
     @commands.is_owner()
