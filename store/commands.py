@@ -2,6 +2,33 @@
 
 from discord.ext import commands
 
+class Paginator:
+    def __init__(self, sep=", ", limit=2000):
+        self.sep = sep
+        self.limit = limit
+        self.buffer = []
+        self.length = 0
+
+    def add(self, string):
+        if len(string) > self.limit:
+            raise ValueError("added string too large for paginator")
+        if not self.length + len(self.sep) + len(string) > self.limit:
+            self.buffer.append(string)
+            self.length += len(self.sep) + len(string)
+            return None
+        result = self.sep.join(self.buffer)
+        self.buffer = [string]
+        self.length = len(string)
+        return result
+
+    def flush(self):
+        if not self.buffer:
+            return None
+        result = self.sep.join(self.buffer)
+        self.buffer = []
+        self.length = 0
+        return result
+
 class StoreCog(commands.Cog, name="Store"):
     def __init__(self, bot):
         self.bot = bot
@@ -21,19 +48,12 @@ class StoreCog(commands.Cog, name="Store"):
     @commands.command(ignore_extras=False)
     @commands.is_owner()
     async def keys(self, ctx):
-        buffer = []
-        length = 0
-        sep = ", "
+        paginator = Paginator()
         async for key in self.bot.store.keys():
-            if length + len(sep) + len(key) > 2000:
-                await ctx.send(sep.join(buffer))
-                buffer = [key]
-                length = len(key)
-            else:
-                buffer.append(key)
-                length += len(sep) + len(key)
-        if buffer:
-            await ctx.send(sep.join(buffer))
+            if page := paginator.add(key):
+                await ctx.send(page)
+        if page := paginator.flush():
+            await ctx.send(page)
 
 def setup(bot):
     bot.add_cog(StoreCog(bot))
