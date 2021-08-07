@@ -23,7 +23,7 @@ class Message(commands.Cog):
         if not text:
             await ctx.send("Please add a message to your request")
             return
-        parts = [ctx.author.mention, text]
+        parts = [f"{ctx.author.mention}:", text]
         prefix = await self.bot.store.get("message:prefix:message")
         if prefix:
             parts.insert(0, prefix)
@@ -46,7 +46,7 @@ class Message(commands.Cog):
         if not text:
             await ctx.send("Please add a message to your request")
             return
-        parts = [ctx.author.mention, text]
+        parts = [f"{ctx.author.mention}:", text]
         prefix = await self.bot.store.get("message:prefix:register")
         if prefix:
             parts.insert(0, prefix)
@@ -69,7 +69,7 @@ class Message(commands.Cog):
                 " through?`)"
             )
             return
-        parts = [ctx.author.mention]
+        parts = [f"{ctx.author.mention}:"]
         prefix = await self.bot.store.get("message:prefix:hacker")
         if prefix:
             parts.insert(0, prefix)
