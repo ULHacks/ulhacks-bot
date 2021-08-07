@@ -36,6 +36,13 @@ class Message(commands.Cog):
     @commands.command()
     async def register(self, ctx, *, text=""):
         """Send a message to the organizers to notify them of your role"""
+        if await self.bot.store.get(f"message:register:{ctx.author.id}"):
+            await ctx.send(
+                "You already registered. If you have any questions, please use"
+                " the `$message` command to contact an organizer. (Example:"
+                " `$message I don't think I registered yet`)"
+            )
+            return
         if not text:
             await ctx.send("Please add a message to your request")
             return
@@ -44,6 +51,7 @@ class Message(commands.Cog):
         if prefix:
             parts.insert(0, prefix)
         await self.message_channel.send(" ".join(parts))
+        await self.bot.store.set(f"message:register:{ctx.author.id}", "1")
         await ctx.send(
             "Thanks for helping out with ULHacks!"
             " An organizer will set you up as soon as possible!"
