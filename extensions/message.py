@@ -35,14 +35,21 @@ class Message(commands.Cog):
 
     @commands.command()
     @commands.is_owner()
-    async def _set_prefix(self, ctx, type_, *, prefix=""):
+    async def _set_prefix(self, ctx, type_, *, prefix=None):
         """Updates or clears the prefix for the specified type"""
         if type_ not in self.TYPES:
             await ctx.send(f"Type not one of {', '.join(self.TYPES)}")
-        if not prefix:
+            return
+        if prefix is None:
+            # Get prefix
+            prefix = await self.bot.store.get(f"message:prefix:{type_}")
+            await ctx.send(f"The {type_} prefix is: {prefix}")
+        elif prefix == '""':
+            # Clear prefix
             await self.bot.store.set(f"message:prefix:{type_}", "")
             await ctx.send(f"Cleared the {type_} prefix")
         else:
+            # Update prefix
             await self.bot.store.set(f"message:prefix:{type_}", prefix)
             await ctx.send(f"Updated the {type_} prefix to: {prefix}")
 
