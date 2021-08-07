@@ -3,6 +3,8 @@
 from discord.ext import commands
 
 class Message(commands.Cog):
+    TYPES = tuple("message".split())
+
     def __init__(self, bot, *, message_channel_id):
         self.bot = bot
         self.message_channel_id = message_channel_id
@@ -33,14 +35,16 @@ class Message(commands.Cog):
 
     @commands.command()
     @commands.is_owner()
-    async def _set_message_prefix(self, ctx, *, prefix=""):
-        """Updates or clears the message prefix"""
+    async def _set_prefix(self, ctx, type_, *, prefix=""):
+        """Updates or clears the prefix for the specified type"""
+        if type_ not in self.TYPES:
+            await ctx.send(f"Type not one of {', '.join(self.TYPES)}")
         if not prefix:
-            await self.bot.store.set("config:message:prefix", "")
-            await ctx.send("Cleared the message prefix")
+            await self.bot.store.set(f"message:prefix:{type_}", "")
+            await ctx.send(f"Cleared the {type_} prefix")
         else:
-            await self.bot.store.set("config:message:prefix", prefix)
-            await ctx.send(f"Updated the message prefix to: {prefix}")
+            await self.bot.store.set(f"message:prefix:{type_}", prefix)
+            await ctx.send(f"Updated the {type_} prefix to: {prefix}")
 
 def setup(bot):
     bot.add_cog(Message(bot, message_channel_id=873653291614085180))
