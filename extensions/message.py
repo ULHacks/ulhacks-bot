@@ -45,7 +45,7 @@ class Message(commands.Cog):
             parts.insert(0, message_prefix)
         await self.message_channel.send(" ".join(parts))
         await ctx.send(
-            "Thanks for sending a message!"
+            "Thanks for helping out with ULHacks!"
             " An organizer will set you up as soon as possible!"
         )
 
