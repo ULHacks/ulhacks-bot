@@ -12,8 +12,11 @@ command_prefix = commands.when_mentioned_or("$")
 def _run(token, **bot_kwargs):
     bot = commands.Bot(**bot_kwargs)
 
+    bot.load_extension("store.json")
+
     bot.load_extension("extensions.info")
     bot.load_extension("extensions.admin")
+    bot.load_extension("extensions.message")
 
     close = bot.loop.close
     bot.loop.close = lambda: None
