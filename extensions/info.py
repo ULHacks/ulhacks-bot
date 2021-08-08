@@ -7,7 +7,7 @@ class Info(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command()
+    @commands.command(hidden=True)
     async def hi(self, ctx):
         await ctx.send("hi")
 
