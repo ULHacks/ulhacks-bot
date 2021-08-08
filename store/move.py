@@ -34,7 +34,7 @@ class MoveStore(Store):
         self._finished_moving_event = None
         self.modified = set()
 
-    async def move():
+    async def move(self):
         # After move
         if self.moved:
             return False
