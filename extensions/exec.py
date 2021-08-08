@@ -140,18 +140,24 @@ class Exec(commands.Cog):
             func = self.wrap_ast(
                 body,
                 scope=self.bot.scope,
-                header="async def ____thingy(ctx, _): pass",
+                header="async def ____thingy(ctx, cog, _): pass",
                 filename="<discordexec>",
             )
         except Exception as e:
             raise RuntimeError(f"Error preparing code: {e!r}") from e
-        # Await and send its result
-        result = await func(ctx, self.result)
-        if result is not None:
-            self.result = result
-            await ctx.send(content=str(result) or "*Empty string*")
+        try:
+            # Await and send its result
+            result = await func(ctx, self, self.result)
+        except Exception as e:
+            import traceback
+            traceback.print_exc()
+            await ctx.send(f"*Traceback printed:* `{e!r}`")
         else:
-            await ctx.send("*Finished*")
+            if result is not None:
+                self.result = result
+                await ctx.send(content=str(result) or "*Empty string*")
+            else:
+                await ctx.send("*Finished*")
 
 def setup(bot):
     bot.add_cog(Exec(bot))
