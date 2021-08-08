@@ -47,19 +47,19 @@ class StoreCog(commands.Cog, name="Store"):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(ignore_extras=False)
+    @commands.command(ignore_extra=False)
     @commands.is_owner()
     async def set(self, ctx, key, value):
         await self.bot.store.set(key, value)
         await ctx.send("Updated")
 
-    @commands.command(ignore_extras=False)
+    @commands.command(ignore_extra=False)
     @commands.is_owner()
     async def get(self, ctx, key):
         value = await self.bot.store.get(key)
         await ctx.send(value or "*Empty value*")
 
-    @commands.command(ignore_extras=False)
+    @commands.command(ignore_extra=False)
     @commands.is_owner()
     async def keys(self, ctx):
         async for page in Paginator().async_pages_from(self.bot.store.keys()):
