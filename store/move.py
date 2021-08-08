@@ -52,13 +52,14 @@ class MoveStore(Store):
     async def set(self, key, value):
         # After move
         if self.moved:
-            return await self.second.set(key, value)
+            await self.second.set(key, value)
         # Before move
-        if not self.moving:
-            return await self.first.set(key, value)
+        elif not self.moving:
+            await self.first.set(key, value)
         # During move
-        await self.first.set(key, value)
-        await self.second.set(key, value)
+        else:
+            await self.first.set(key, value)
+            await self.second.set(key, value)
 
     async def get(self, key):
         # After move
@@ -73,7 +74,6 @@ class MoveStore(Store):
         if self.moved:
             async for key in self.second.keys():
                 yield key
-            return
         # Before or during move
         else:
             async for key in self.first.keys():
