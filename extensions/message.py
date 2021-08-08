@@ -55,7 +55,7 @@ class Message(commands.Cog):
         await self.bot.store.set(f"message:register:{ctx.author.id}", "1")
         await ctx.send(
             "Thanks for helping out with ULHacks!"
-            " An organizer will set you up as soon as possible!"
+            " An organizer will help get you set up as soon as possible!"
         )
 
     @commands.command()
