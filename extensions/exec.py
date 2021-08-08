@@ -118,7 +118,7 @@ class Exec(commands.Cog):
         # Await and send its result
         result = await func(ctx)
         if result is not None:
-            await ctx.send(result)
+            await ctx.send(content=str(result) or "*Empty string*")
         else:
             await ctx.send("*Finished*")
 
