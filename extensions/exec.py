@@ -93,7 +93,7 @@ class Exec(commands.Cog):
 
     @commands.command(hidden=True)
     @commands.is_owner()
-    async def exec(self, ctx, *, text):
+    async def exec(self, ctx, *, text=""):
         """Executes some code"""
         try:
             self.ensure_scope()
@@ -101,6 +101,9 @@ class Exec(commands.Cog):
             text = self.clean_code(text)
             # Compile and get a list of statements
             body = ast.parse(text).body
+            # Ensure there's at least one statement
+            if not body:
+                body.append(ast.Pass())
             # Try to return the last expression
             body = self.return_last(body)
             # Wrap in an async function
