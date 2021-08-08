@@ -11,19 +11,13 @@ class MoveStore(Store):
     When .move() is first awaited, it will start copying all data from the
     first store into the second store using the .keys() async iterator.
 
-    Reading and writing will still work during moving. Unless a key has been
-    modified, the first store will be used. When setting a key, the second
-    store will be used, and future reads will use the second store.
+    Reading and writing will still work during moving. When getting a key,
+    the first store will be used. When setting a key, both stores
+    will be used. Calls to .move() will block until all data has been moved and
+    return True.
 
-    What this means is that a call to .move() will stop all writes to the first
-    store.
-
-    When it is still moving data, calls to .move() will block until all data
-    has been moved.
-
-    After moving, all data will use the second store.
-
-    Future calls to .move() will do nothing.
+    After moving, all data will use the second store. Calls to .move()
+    will do nothing and return False.
 
     """
     def __init__(self, first, second):
@@ -32,7 +26,6 @@ class MoveStore(Store):
         self.moving = False
         self.moved = False
         self._finished_moving_event = None
-        self.modified = set()
 
     async def move(self):
         # After move
@@ -46,20 +39,13 @@ class MoveStore(Store):
         self.moving = True
         self._finished_moving_event = asyncio.Event()
         async for key in self.first.keys():
-            if key in self.modified:
-                continue
             value = await self.first.get(key)
-            # This condition is duplicated in case the key was modified during
-            # our .get call.
-            if key in self.modified:
-                continue
-            # There's an edge case where a .set is issued before this is called
-            # and finishes before we do. The key could will be overwritten with
+            # There's an edge case where a .set is issued before this .get and
+            # finishes before the .set. The key could will be overwritten with
             # the old value. We simply hope that the use is OK with that.
             await self.second.set(key, value)
         self.moved = True
         self.moving = False
-        self.modified = set()
         self._finished_moving_event.set()
         return True
 
@@ -71,19 +57,14 @@ class MoveStore(Store):
         if not self.moving:
             return await self.first.set(key, value)
         # During move
+        await self.first.set(key, value)
         await self.second.set(key, value)
-        self.modified.add(str(key))
 
     async def get(self, key):
         # After move
         if self.moved:
             return await self.second.get(key)
-        # Before move
-        if not self.moving:
-            return await self.first.get(key)
-        # During move
-        if str(key) in self.modified:
-            return await self.second.get(key)
+        # Before or during move
         else:
             return await self.first.get(key)
 
@@ -93,13 +74,7 @@ class MoveStore(Store):
             async for key in self.second.keys():
                 yield key
             return
-        # Before move
-        if not self.moving:
+        # Before or during move
+        else:
             async for key in self.first.keys():
                 yield key
-            return
-        # During move
-        async for key in self.first.keys():
-            yield key
-        async for key in self.second.keys():
-            yield key
