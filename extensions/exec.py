@@ -9,6 +9,7 @@ from discord.ext import commands
 class Exec(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+        self.result = None
 
     def ensure_scope(self):
         # Ensures that the bot has an execution scope
@@ -110,14 +111,15 @@ class Exec(commands.Cog):
             func = self.wrap_ast(
                 body,
                 scope=self.bot.scope,
-                header="async def ____thingy(ctx): pass",
+                header="async def ____thingy(ctx, _): pass",
                 filename="<discordexec>",
             )
         except Exception as e:
             raise RuntimeError(f"Error preparing code: {e!r}") from e
         # Await and send its result
-        result = await func(ctx)
+        result = await func(ctx, self.result)
         if result is not None:
+            self.result = result
             await ctx.send(content=str(result) or "*Empty string*")
         else:
             await ctx.send("*Finished*")
