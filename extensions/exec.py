@@ -3,6 +3,7 @@
 Adapted from JoshGone's admin.py
 
 """
+import asyncio
 import ast
 from discord.ext import commands
 
@@ -23,6 +24,34 @@ class Exec(commands.Cog):
                 "discord": discord,
                 "commands": commands,
             }
+
+    @staticmethod
+    def reload(name):
+        """Helper function to reload the specified module"""
+        import importlib
+        importlib.invalidate_caches()
+        module = importlib.import_module(name)
+        return importlib.reload(module)
+
+    async def move(self, new_store):
+        """Helper function to move the current store's data into a new store"""
+        import store.move
+        old_store = self.bot.store
+        try:
+            self.bot.store = store.move.MoveStore(old_store, new_store)
+            await asyncio.sleep(1)
+            await self.bot.store.move()
+            await asyncio.sleep(1)
+        except Exception:
+            self.bot.store = old_store
+        else:
+            self.bot.store = new_store
+
+    async def copy(self, new_store):
+        """Helper function to move the current store's data into a new store"""
+        async for key in self.bot.store.keys():
+            value = await self.bot.store.get(key)
+            await new_store.set(key, value)
 
     @staticmethod
     def clean_code(text):
