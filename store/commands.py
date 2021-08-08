@@ -29,6 +29,20 @@ class Paginator:
         self.length = 0
         return result
 
+    def pages_from(iterable):
+        for string in iterable:
+            if page := self.add(string):
+                yield page
+        if page := self.flush():
+            yield page
+
+    async def async_pages_from(self, async_iterable):
+        async for string in async_iterable:
+            if page := self.add(string):
+                yield page
+        if page := self.flush():
+            yield page
+
 class StoreCog(commands.Cog, name="Store"):
     def __init__(self, bot):
         self.bot = bot
@@ -48,11 +62,7 @@ class StoreCog(commands.Cog, name="Store"):
     @commands.command(ignore_extras=False)
     @commands.is_owner()
     async def keys(self, ctx):
-        paginator = Paginator()
-        async for key in self.bot.store.keys():
-            if page := paginator.add(key):
-                await ctx.send(page)
-        if page := paginator.flush():
+        async for page in Paginator().async_pages_from(self.bot.store.keys()):
             await ctx.send(page)
 
 def setup(bot):
