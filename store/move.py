@@ -71,9 +71,8 @@ class MoveStore(Store):
         if not self.moving:
             return await self.first.set(key, value)
         # During move
-        value = await self.second.set(key, value)
+        await self.second.set(key, value)
         self.modified.add(str(key))
-        return value
 
     async def get(self, key):
         # After move
