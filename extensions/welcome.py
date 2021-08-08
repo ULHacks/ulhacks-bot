@@ -1,6 +1,7 @@
 """Binds a listener for members joining the ULHacks server"""
 
 import asyncio
+import discord
 from discord.ext import commands
 
 class Welcome(commands.Cog):
@@ -17,7 +18,12 @@ class Welcome(commands.Cog):
         if member.guild.id != self.guild_id:
             return
         content = await asyncio.to_thread(self._get_welcome_message)
-        await member.send(content)
+        try:
+            await member.send(content)
+        except discord.Forbidden as e:
+            # If we can't DM the user, ignore the error
+            if e.code != 50007:
+                raise
 
     def _get_welcome_message(self):
         with open(self.welcome_filename) as file:
