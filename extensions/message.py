@@ -70,7 +70,7 @@ class Message(commands.Cog):
                 " through?`)"
             )
             return
-        parts = [f"{ctx.author.mention}:"]
+        parts = [ctx.author.mention]
         prefix = await self.bot.store.get("message:prefix:hacker")
         if prefix:
             parts.insert(0, prefix)
