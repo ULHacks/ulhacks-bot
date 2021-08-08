@@ -21,7 +21,8 @@ class Welcome(commands.Cog):
         try:
             await member.send(content)
         except discord.Forbidden as e:
-            # If we can't DM the user, ignore the error
+            # If we can't DM the user, ignore the error. Docs for status codes:
+            # https://discord.com/developers/docs/topics/opcodes-and-status-codes
             if e.code != 50007:
                 raise
 
