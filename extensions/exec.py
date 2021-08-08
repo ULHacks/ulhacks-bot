@@ -88,34 +88,6 @@ class Exec(commands.Cog):
         # Compile and execute it in the provided scope
         code = compile(ast.fix_missing_locations(module), filename, "exec")
         exec(code, scope)
-        # Get all locals in the defined function
-        code = scope[function.name].__code__
-        names = {
-            *code.co_names,
-            *code.co_varnames,
-            *code.co_cellvars,
-            *code.co_freevars,  # There shouldn't be any but whatever
-        }
-        # Remove parameters from names
-        args = function.args
-        for arg in [
-            *args.posonlyargs,
-            args.vararg,
-            *args.args,
-            args.kwarg,
-            *args.kwonlyargs,
-        ]:
-            if arg is None:
-                continue
-            names.discard(arg.arg)
-        # If there are names to make global...
-        if names:
-            # Add a global statement to the function with all names
-            global_ = ast.Global(list(names))
-            function.body.insert(0, global_)
-            # Compile and execute it again
-            code = compile(ast.fix_missing_locations(module), filename, "exec")
-            exec(code, scope)
         # Return the defined function
         return scope[function.name]
 
