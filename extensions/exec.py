@@ -92,7 +92,7 @@ class Exec(commands.Cog):
         # Return the defined function
         return scope[function.name]
 
-    @commands.command(hidden=True)
+    @commands.command(aliases=["$"], hidden=True)
     @commands.is_owner()
     async def exec(self, ctx, *, text=""):
         """Executes some code"""
