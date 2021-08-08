@@ -52,8 +52,12 @@ class JsonStore(Store):
             return await asyncio.to_thread(self._get, key)
 
     def _get(self, key):
-        with open(self.filename) as file:
-            data = json.load(file)
+        # Get data from the file if it exists
+        try:
+            with open(self.filename) as file:
+                data = json.load(file)
+        except FileNotFoundError:
+            data = {}
         # Keys that don't exist are ""
         return data.get(str(key), "")
 
@@ -66,8 +70,12 @@ class JsonStore(Store):
             yield key
 
     def _keys(self):
-        with open(self.filename) as file:
-            data = json.load(file)
+        # Get data from the file if it exists
+        try:
+            with open(self.filename) as file:
+                data = json.load(file)
+        except FileNotFoundError:
+            data = {}
         return data.keys()
 
 def setup(bot):
