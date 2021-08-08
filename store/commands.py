@@ -29,7 +29,7 @@ class Paginator:
         self.length = 0
         return result
 
-    def pages_from(iterable):
+    def pages_from(self, iterable):
         for string in iterable:
             if page := self.add(string):
                 yield page
