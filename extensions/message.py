@@ -25,7 +25,7 @@ class Message(commands.Cog):
             await ctx.send("Please add a message to your request")
             return
         parts = [f"{ctx.author.mention}:", text]
-        prefix = await self.bot.store.get("message:prefix:message")
+        prefix = await self.bot.store.get("message/prefix/message")
         if prefix:
             parts.insert(0, prefix)
         await self.message_channel.send(" ".join(parts))
@@ -37,7 +37,7 @@ class Message(commands.Cog):
     @commands.command()
     async def register(self, ctx, *, text=""):
         """Send a message to the organizers to notify them of your role"""
-        if await self.bot.store.get(f"message:register:{ctx.author.id}"):
+        if await self.bot.store.get(f"message/register/{ctx.author.id}"):
             await ctx.send(
                 "You already registered. If you have any questions, please use"
                 " the `$message` command to contact an organizer. (Example:"
@@ -48,11 +48,11 @@ class Message(commands.Cog):
             await ctx.send("Please add a message to your request")
             return
         parts = [f"{ctx.author.mention}:", text]
-        prefix = await self.bot.store.get("message:prefix:register")
+        prefix = await self.bot.store.get("message/prefix/register")
         if prefix:
             parts.insert(0, prefix)
         await self.message_channel.send(" ".join(parts))
-        await self.bot.store.set(f"message:register:{ctx.author.id}", "1")
+        await self.bot.store.set(f"message/register/{ctx.author.id}", "1")
         await ctx.send(
             "Thanks for helping out with ULHacks!"
             " An organizer will help get you set up as soon as possible!"
@@ -61,7 +61,7 @@ class Message(commands.Cog):
     @commands.command()
     async def hacker(self, ctx):
         """Notify the organizers of your participation"""
-        if await self.bot.store.get(f"message:hacker:{ctx.author.id}"):
+        if await self.bot.store.get(f"message/hacker/{ctx.author.id}"):
             await ctx.send(
                 "You have already sent a verification request with `$hacker`."
                 " If you have any questions, please use the `$message` command"
@@ -71,11 +71,11 @@ class Message(commands.Cog):
             )
             return
         parts = [ctx.author.mention]
-        prefix = await self.bot.store.get("message:prefix:hacker")
+        prefix = await self.bot.store.get("message/prefix/hacker")
         if prefix:
             parts.insert(0, prefix)
         await self.message_channel.send(" ".join(parts))
-        await self.bot.store.set(f"message:hacker:{ctx.author.id}", "1")
+        await self.bot.store.set(f"message/hacker/{ctx.author.id}", "1")
         await ctx.send(
             "Thanks for participating in ULHacks!"
             " An organizer will verify you as soon as possible!"
@@ -90,15 +90,15 @@ class Message(commands.Cog):
             return
         if prefix is None:
             # Get prefix
-            prefix = await self.bot.store.get(f"message:prefix:{type_}")
+            prefix = await self.bot.store.get(f"message/prefix/{type_}")
             await ctx.send(f"The {type_} prefix is: {prefix}")
         elif prefix == '""':
             # Clear prefix
-            await self.bot.store.set(f"message:prefix:{type_}", "")
+            await self.bot.store.set(f"message/prefix/{type_}", "")
             await ctx.send(f"Cleared the {type_} prefix")
         else:
             # Update prefix
-            await self.bot.store.set(f"message:prefix:{type_}", prefix)
+            await self.bot.store.set(f"message/prefix/{type_}", prefix)
             await ctx.send(f"Updated the {type_} prefix to: {prefix}")
 
 def setup(bot):
