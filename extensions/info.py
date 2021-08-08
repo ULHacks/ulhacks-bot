@@ -1,5 +1,6 @@
 """General bot stuff like on_ready"""
 
+import discord
 from discord.ext import commands
 
 class Info(commands.Cog):
@@ -13,6 +14,11 @@ class Info(commands.Cog):
     @commands.Cog.listener()
     async def on_ready(self):
         print(f"Logged in as {self.bot.user}")
+        activity = discord.Activity(
+            type=discord.ActivityType.listening,
+            name="$help"
+        )
+        await self.bot.change_presence(activity=activity)
 
     @commands.Cog.listener()
     async def on_command_error(self, ctx, error):
