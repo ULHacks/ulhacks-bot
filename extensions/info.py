@@ -25,6 +25,10 @@ class Info(commands.Cog):
         # Unpack the error for cleaner error messages
         if isinstance(error, commands.CommandInvokeError):
             error = error.__cause__ or error
+        if hasattr(error, "original"):
+            error = type(error).__name__, getattr(error, "original", error)
+        if hasattr(error, "errors"):
+            error = type(error).__name__, getattr(error, "errors", [])
         try:
             await ctx.send(f"Oops, an error occurred: `{error!r}`")
         except Exception:
