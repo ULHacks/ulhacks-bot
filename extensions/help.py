@@ -1,6 +1,5 @@
 """Handles help categories and channels"""
 
-import traceback
 import discord
 from discord.ext import commands
 
