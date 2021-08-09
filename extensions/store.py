@@ -5,7 +5,7 @@ import os
 def setup_local(bot):
     import store.json
     filename = os.environ.get("ULHACKS_JSON_STORE_FILENAME", None)
-    bot.store = JsonStore(filename=filename)
+    bot.store = store.json.JsonStore(filename=filename)
 
 def setup_heroku(bot):
     import store.postgresql
