@@ -1,5 +1,6 @@
 """General bot stuff like on_ready"""
 
+import traceback
 import discord
 from discord.ext import commands
 
@@ -23,17 +24,28 @@ class Info(commands.Cog):
     @commands.Cog.listener()
     async def on_command_error(self, ctx, error):
         # Unpack the error for cleaner error messages
-        if isinstance(error, commands.CommandInvokeError):
-            error = error.__cause__ or error
-        if hasattr(error, "original"):
-            error = type(error).__name__, getattr(error, "original", error)
-        if hasattr(error, "errors"):
-            error = type(error).__name__, getattr(error, "errors", [])
+        parts = []
+        # Get the original error causing this
+        original = getattr(error, "original", None)
+        if original is not None:
+            wrapper, error = error, original
+            parts += ["wrapped by", f"`{type(wrapper).__name__}`"]
+        # Get the list of errors causing this
+        errors = getattr(error, "errors", None)
+        if errors is not None:
+            parts += ["with errors:"]
+            for cause_error in errors:
+                parts += [f"`{cause_error!r}`"]
+                parts += ["and"]
+            parts.pop()
+        # Add the base error
+        parts[:0] = ["Oops, an error occurred:", f"`{error!r}`"]
+        # Send the error message
         try:
-            await ctx.send(f"Oops, an error occurred: `{error!r}`")
-        except Exception:
-            print(f"Error: {error!r}")
-            raise
+            await ctx.send(" ".join(parts))
+        # Note down that something went wrong and ignore it
+        except Exception as e:
+            print(f"Error while sending error message: {e!r}")
 
 def setup(bot):
     bot.add_cog(Info(bot))
