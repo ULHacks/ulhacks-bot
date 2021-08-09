@@ -53,6 +53,19 @@ class Exec(commands.Cog):
             value = await self.bot.store.get(key)
             await new_store.set(key, value)
 
+    async def backup(self, ctx):
+        """Helper function to send a JSON file with the current store's data"""
+        import os
+        import random
+        import store.json
+        filename = f"temp-json-store-{random.randint(1, 9999):0>4}.json"
+        try:
+            json_store = store.json.JsonStore(filename)
+            await self.copy(json_store)
+            await ctx.send(file=discord.File(filename))
+        finally:
+            await asyncio.to_thread(os.unlink, filename)
+
     @staticmethod
     def clean_code(text):
         """Remove backticks from a Discord message's content
