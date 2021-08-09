@@ -48,6 +48,11 @@ class StoreCog(commands.Cog, name="Store"):
     def __init__(self, bot):
         self.bot = bot
 
+    async def keys_matching(self, pattern):
+        async for key in self.bot.store.keys():
+            if fnmatch.fnmatchcase(key, pattern):
+                yield key
+
     @commands.command(ignore_extra=False)
     @commands.is_owner()
     async def set(self, ctx, key, value):
@@ -57,9 +62,7 @@ class StoreCog(commands.Cog, name="Store"):
             return
         pattern = key
         updated = 0
-        async for key in self.bot.store.keys():
-            if not fnmatch.fnmatchcase(key, pattern):
-                continue
+        async for key in self.keys_matching(pattern):
             await self.bot.store.set(key, value)
             updated += 1
         await ctx.send(f"Updated {updated}")
@@ -72,13 +75,11 @@ class StoreCog(commands.Cog, name="Store"):
             await ctx.send(value or "*Empty value*")
             return
         pattern = key
-        keys = (
-            await self.bot.store.get(key)
-            async for key in self.bot.store.keys()
-            if fnmatch.fnmatchcase(key, pattern)
-        )
         num_pages = 0
-        async for page in Paginator().async_pages_from(keys):
+        async for page in Paginator().async_pages_from(
+            await self.bot.store.get(key)
+            async for key in self.keys_matching(pattern)
+        ):
             await ctx.send(page)
             num_pages += 1
         if num_pages == 0:
@@ -88,21 +89,19 @@ class StoreCog(commands.Cog, name="Store"):
     @commands.is_owner()
     async def keys(self, ctx, pattern=None):
         if pattern is None:
-            keys = self.bot.store.keys()
             num_pages = 0
-            async for page in Paginator().async_pages_from(keys):
+            async for page in Paginator().async_pages_from(
+                self.bot.store.keys()
+            ):
                 await ctx.send(page)
                 num_pages += 1
             if num_pages == 0:
                 await ctx.send("*No keys match*")
             return
-        keys = (
-            key
-            async for key in self.bot.store.keys()
-            if fnmatch.fnmatchcase(key, pattern)
-        )
         num_pages = 0
-        async for page in Paginator().async_pages_from(keys):
+        async for page in Paginator().async_pages_from(
+            self.keys_matching(pattern)
+        ):
             await ctx.send(page)
             num_pages += 1
         if num_pages == 0:
