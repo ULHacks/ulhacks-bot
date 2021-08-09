@@ -7,10 +7,17 @@ from discord.ext import commands
 class Info(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+        self.debug = False
 
     @commands.command(hidden=True)
     async def hi(self, ctx):
         await ctx.send("hi")
+
+    @commands.command(hidden=True)
+    @commands.is_owner()
+    async def debug(self, ctx, debug: bool):
+        self.debug = debug
+        await ctx.send(f"Debug set to {debug}")
 
     @commands.Cog.listener()
     async def on_ready(self):
@@ -23,6 +30,9 @@ class Info(commands.Cog):
 
     @commands.Cog.listener()
     async def on_command_error(self, ctx, error):
+        # Print whole traceback if debugging
+        if self.debug:
+            traceback.print_exception(type(error), error, error.__traceback__)
         # Unpack the error for cleaner error messages
         parts = []
         # Get the original error causing this
