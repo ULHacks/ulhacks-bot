@@ -5,6 +5,8 @@ Adapted from JoshGone's admin.py
 """
 import asyncio
 import ast
+
+import discord
 from discord.ext import commands
 
 class Exec(commands.Cog):
@@ -16,8 +18,6 @@ class Exec(commands.Cog):
         # Ensures that the bot has an execution scope
         if not hasattr(self.bot, "scope"):
             # Initialize the scope with some modules and the bot
-            import asyncio
-            import discord
             self.bot.scope = {
                 "bot": self.bot,
                 "asyncio": asyncio,
