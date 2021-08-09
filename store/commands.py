@@ -88,19 +88,11 @@ class StoreCog(commands.Cog, name="Store"):
     @commands.command(ignore_extra=False)
     @commands.is_owner()
     async def keys(self, ctx, pattern=None):
-        if pattern is None:
-            num_pages = 0
-            async for page in Paginator().async_pages_from(
-                self.bot.store.keys()
-            ):
-                await ctx.send(page)
-                num_pages += 1
-            if num_pages == 0:
-                await ctx.send("*No keys match*")
-            return
         num_pages = 0
         async for page in Paginator().async_pages_from(
             self.keys_matching(pattern)
+            if pattern is not None
+            else self.bot.store.keys()
         ):
             await ctx.send(page)
             num_pages += 1
