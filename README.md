@@ -45,6 +45,7 @@ The ULHacks bot takes all configuration using environment variables. Here's a ta
 | Name              | Purpose                                                      |
 | ----------------- | ------------------------------------------------------------ |
 | ULHACKS_BOT_TOKEN | Discord bot user's token. Should be around 59 characters long and look random. |
+| ULHACKS_ENV       | Environment the bot is running in. Defaults to `local`.      |
 
 You can get your Discord bot user's token by going to [your dashboard](https://discord.com/developers/applications), clicking on your application, clicking *Bot* in the left sidebar, and pressing the *Copy* button under *Token* in the *Build-A-Bot* section.
 
@@ -71,4 +72,22 @@ python ulhacks_bot.py
 # On Linux
 python3 ulhacks_bot.py
 ```
+
+## More Config
+
+### Running Locally
+
+If the ULHACKS_ENV environment variable is not set or is set to `local`, the bot will use a local data store.
+
+| Name                        | Purpose                                                      |
+| --------------------------- | ------------------------------------------------------------ |
+| ULHACKS_JSON_STORE_FILENAME | The filename the JSON store uses. Defaults to `json-store.json`. |
+
+### Running on Heroku
+
+If the ULHACKS_ENV environment variable is set to `heroku`, the bot will use a PostgreSQL data store.
+
+| Name         | Purpose                                                      |
+| ------------ | ------------------------------------------------------------ |
+| DATABASE_URL | The URI the PostgreSQL store uses. Should start with `postgres://`. |
 
