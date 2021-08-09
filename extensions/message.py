@@ -132,5 +132,5 @@ def setup(bot):
         bot,
         guild_id=871391148239880252,
         message_channel_id=873653291614085180,
-        invite_link="https://discord.gg/An26dB3WBP",
+        invite_link="https://ulhacks.com/discord",
     ))
