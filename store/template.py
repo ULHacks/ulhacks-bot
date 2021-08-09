@@ -10,6 +10,3 @@ class Store:
     # Used to move data between stores. Can be slow / inefficient
     async def keys(self) -> AsyncIterator[str]:
         raise NotImplementedError
-
-def setup(bot) -> None:
-    raise NotImplementedError

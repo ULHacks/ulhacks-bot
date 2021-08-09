@@ -71,7 +71,3 @@ class PostgresqlStore(Store):
                     yield record[0]
         finally:
             await conn.close()
-
-def setup(bot):
-    address = os.environ.get("ULHACKS_POSTGRESQL_STORE_ADDRESS", None)
-    bot.store = PostgresqlStore(address=address)

@@ -77,7 +77,3 @@ class JsonStore(Store):
         except FileNotFoundError:
             data = {}
         return data.keys()
-
-def setup(bot):
-    filename = os.environ.get("ULHACKS_JSON_STORE_FILENAME", None)
-    bot.store = JsonStore(filename=filename)
