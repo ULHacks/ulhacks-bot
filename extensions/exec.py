@@ -48,7 +48,7 @@ class Exec(commands.Cog):
             self.bot.store = new_store
 
     async def copy(self, new_store):
-        """Helper function to move the current store's data into a new store"""
+        """Helper function to copy the current store's data into a new store"""
         async for key in self.bot.store.keys():
             value = await self.bot.store.get(key)
             await new_store.set(key, value)
