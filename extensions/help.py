@@ -4,14 +4,14 @@ import traceback
 import discord
 from discord.ext import commands
 
-def is_help_channel_check(ctx):
+async def is_help_channel_check(ctx):
     """Returns True when in a help channel"""
     if await ctx.cog.is_help_channel(ctx.channel):
         return True
     else:
         raise commands.CheckFailure("Current channel ain't a help channel")
 
-def is_help_channel_owner_check(ctx):
+async def is_help_channel_owner_check(ctx):
     """Returns True if invoker is the channel creator"""
     try:
         owner_id = await ctx.cog.get_channel_owner(ctx.channel)
