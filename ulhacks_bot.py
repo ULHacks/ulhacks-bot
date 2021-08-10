@@ -23,6 +23,7 @@ def _run(token, **bot_kwargs):
     bot.load_extension("extensions.welcome")
     bot.load_extension("extensions.store")
     bot.load_extension("extensions.help")
+    bot.load_extension("extensions.moderators")
 
     close = bot.loop.close
     bot.loop.close = lambda: None
