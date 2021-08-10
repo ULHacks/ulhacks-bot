@@ -115,10 +115,13 @@ class Moderators(commands.Cog):
         # Check if member is a moderator
         raw_role_names = await self.bot.store.get(f"{key}/roles")
         role_names = {name.upper() for name in raw_role_names.split()}
-        is_mod = any(role.name.upper() in role_names for role in member.roles)
+        should_show = (
+            member.status != discord.Status.offline
+            and any(role.name.upper() in role_names for role in member.roles)
+        )
         # Update online members
         online_ids = {*(await self.bot.store.get(f"{key}/online")).split()}
-        if is_mod:
+        if should_show:
             online_ids.add(str(member.id))
         else:
             online_ids.discard(str(member.id))
