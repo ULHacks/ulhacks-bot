@@ -10,8 +10,7 @@ from discord.ext import commands
 
 command_prefix = commands.when_mentioned_or("$")
 
-intents = discord.Intents.default()
-intents.members = True
+intents = discord.Intents.all()
 
 def _run(token, **bot_kwargs):
     bot = commands.Bot(**bot_kwargs)
