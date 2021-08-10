@@ -51,8 +51,12 @@ class Info(commands.Cog):
         # Add the base error
         parts[:0] = ["Oops, an error occurred:", f"`{error!r}`"]
         # Send the error message
+        content = " ".join(parts)
         try:
-            await ctx.send(" ".join(parts))
+            try:
+                await ctx.send(content)
+            except discord.Forbidden:
+                await ctx.author.send(content)
         # Note down that something went wrong and ignore it
         except Exception as e:
             print(f"Error while sending error message: {e!r}")
