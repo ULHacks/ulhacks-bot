@@ -5,6 +5,8 @@ import discord
 from discord.ext import commands
 
 class Moderators(commands.Cog):
+    DEFAULT_ALLOFFLINE = "*No moderators are currently available.*"
+
     def __init__(self, bot):
         self.bot = bot
 
@@ -70,6 +72,25 @@ class Moderators(commands.Cog):
             with contextlib.suppress(ValueError, LookupError):
                 await self.update_message(ctx.guild)
 
+    @mods.command()
+    async def alloffline(self, ctx, *, text=None):
+        """Sets or gets the message to display when no one is online"""
+        key = f"moderators/{ctx.guild.id}"
+        if text is None:
+            text = (
+                await self.bot.store.get(f"{key}/alloffline")
+                or self.DEFAULT_ALLOFFLINE
+            )
+            await ctx.send(f"This server's all offline message is: {text}")
+        else:
+            if text == '""':
+                text = ""
+            await self.bot.store.set(f"{key}/alloffline", text)
+            await ctx.send(f"Updated this server's all offline message")
+            # Update just in case
+            with contextlib.suppress(ValueError, LookupError):
+                await self.update_message(ctx.guild)
+
     @commands.Cog.listener()
     async def on_member_update(self, before, after):
         await self.update_member(after)
@@ -91,14 +112,13 @@ class Moderators(commands.Cog):
     async def update_member(self, member):
         """Updates the store with the member's status"""
         key = f"moderators/{member.guild.id}"
-        # Ignore if not a moderator
+        # Check if member is a moderator
         raw_role_names = await self.bot.store.get(f"{key}/roles")
         role_names = {name.upper() for name in raw_role_names.split()}
-        if not any(role.name.upper() in role_names for role in member.roles):
-            return
+        is_mod = any(role.name.upper() in role_names for role in member.roles)
         # Update online members
         online_ids = {*(await self.bot.store.get(f"{key}/online")).split()}
-        if member.status == discord.Status.online:
+        if is_mod:
             online_ids.add(str(member.id))
         else:
             online_ids.discard(str(member.id))
@@ -133,8 +153,12 @@ class Moderators(commands.Cog):
         online_ids = {*(await self.bot.store.get(f"{key}/online")).split()}
         if online_ids:
             mentions = ", ".join(f"<@{id}>" for id in sorted(online_ids))
+            content = f"{prefix}{mentions}"
         else:
-            mentions = "*No one is online :(*"
+            content = (
+                await self.bot.store.get(f"{key}/alloffline")
+                or self.DEFAULT_ALLOFFLINE
+            )
         # Get the channel
         channel_id = int(await self.bot.store.get(f"{key}/channel"))
         channel = guild.get_channel(channel_id)
@@ -145,7 +169,7 @@ class Moderators(commands.Cog):
         partial_message = channel.get_partial_message(message_id)
         # Edit the message
         try:
-            await partial_message.edit(content=f"{prefix}{mentions}")
+            await partial_message.edit(content=content)
         except discord.NotFound as e:
             error = f"cannot get message with id: {message_id}"
             raise LookupError(error) from e
