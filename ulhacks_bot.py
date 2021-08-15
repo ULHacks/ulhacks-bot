@@ -15,15 +15,15 @@ intents = discord.Intents.all()
 def _run(token, **bot_kwargs):
     bot = commands.Bot(**bot_kwargs)
 
-    bot.load_extension("store.commands")
+    bot.load_extension("cogs.store")
+    bot.load_extension("cogs.info")
+    bot.load_extension("cogs.admin")
+    bot.load_extension("cogs.message")
+    bot.load_extension("cogs.welcome")
+    bot.load_extension("cogs.help")
+    bot.load_extension("cogs.moderators")
 
-    bot.load_extension("extensions.info")
-    bot.load_extension("extensions.admin")
-    bot.load_extension("extensions.message")
-    bot.load_extension("extensions.welcome")
     bot.load_extension("extensions.store")
-    bot.load_extension("extensions.help")
-    bot.load_extension("extensions.moderators")
 
     close = bot.loop.close
     bot.loop.close = lambda: None

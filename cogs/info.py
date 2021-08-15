@@ -24,7 +24,7 @@ class Info(commands.Cog):
         print(f"Logged in as {self.bot.user}")
         activity = discord.Activity(
             type=discord.ActivityType.listening,
-            name="$help"
+            name="$help",
         )
         await self.bot.change_presence(activity=activity)
 
